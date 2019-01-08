@@ -12,7 +12,6 @@ script:
   - echo $GOOGLE_CREDENTIALS_BASE64 > base64.json
   - base64 -d base64.json > credentials.json
   - gcloud auth activate-service-account --key-file=credentials.json
-  - cat base64.json
-  - cat credentials.json
+
   # Upload the built snap file
   - gsutil cp ./artifacts/*.deb $GOOGLE_BUCKET
