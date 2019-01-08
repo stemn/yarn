@@ -14,4 +14,4 @@ script:
   - gcloud auth activate-service-account --key-file=credentials.json
 
   # Upload the built snap file
-  - gsutil cp artifacts/*.deb $GOOGLE_BUCKET
+  - gsutil cp ./artifacts/*.deb $GOOGLE_BUCKET
