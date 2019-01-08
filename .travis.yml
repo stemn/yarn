@@ -1,7 +1,7 @@
 language: bash
+
 services:
   - docker
-
 
 script:
   # Build the deb package in the yarn development container
