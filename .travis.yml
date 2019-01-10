@@ -19,5 +19,4 @@ script:
 
   # Upload the built snap file
   - ls -la artifacts
-  - mv artifacts/*.deb stemn-yarn.deb
-  - gsutil cp stemn-yarn.deb $GOOGLE_BUCKET
+  - gsutil cp artifacts/*.deb $GOOGLE_BUCKET/stemn-yarn.deb
