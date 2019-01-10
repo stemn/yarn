@@ -5,7 +5,7 @@ services:
 
 script:
   # Build the deb package in the yarn development container
-  - docker run -v $PWD:$PWD -w $PWD -u $(id -u) yarnpkg/dev:latest /bin/sh -c "yarn && yarn build-dist && scripts/build-deb.sh"
+  - docker run -v $PWD:$PWD -w $PWD yarnpkg/dev:latest /bin/sh -c "yarn && yarn build-dist && scripts/build-deb.sh"
 
   # Install gcloud so we can upload the build to our bucket
   - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
@@ -15,8 +15,8 @@ script:
   # Authenticate
   - echo $GOOGLE_CREDENTIALS_BASE64 > base64.json
   - base64 -d base64.json > credentials.json
-  - gcloud auth activate-service-account --key-file=credentials.json
+  # - gcloud auth activate-service-account --key-file=credentials.json
 
   # Upload the built snap file
-  - ls -la artifacts
+  - whoami
   - gsutil cp artifacts/*.deb $GOOGLE_BUCKET/stemn-yarn.deb
