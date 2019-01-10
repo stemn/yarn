@@ -14,8 +14,7 @@ script:
 
   # Authenticate
   - echo $GOOGLE_CREDENTIALS_BASE64 | base64 -d > credentials.json
-  # - gcloud auth activate-service-account --key-file=credentials.json
+  - gcloud auth activate-service-account --key-file=credentials.json
 
   # Upload the built snap file
-  - whoami
   - gsutil cp artifacts/*.deb $GOOGLE_BUCKET/stemn-yarn.deb
