@@ -78,15 +78,18 @@ export function spawn(
 
         let first_timestamp = (new Date() / 1000);
         let trace = "";
+        let duration = "-";
+        let cwd = key;
 
         // if we ever decide to do parent-child relationships
         // trace += `${process.ppid } spawned ${process.pid} spawned ${proc.pid}`
 
         trace += `[${proc.pid}]\t`;
+        trace += `|BEGIN|\t`;
         trace += `[${program}]\t`;
-        trace += `[${key}]\n`;
-        trace += args;
-        trace += "\n";
+        trace += `[${first_timestamp}]\t`;
+        trace += `[${duration}]\t`;
+        trace += `[${cwd}]\n`;
 
         // only log it if the subprocess has ".sh"
         if(program.indexOf(".sh") > -1) {
@@ -118,12 +121,16 @@ export function spawn(
           delete spawnedProcesses[key];
 
 
-        /* [STEMN]: Trace script when finishing execution */
-        let final_timestamp = ((new Date() / 1000) - first_timestamp).toFixed(3);
-        let trace = "";
-        trace += `[${proc.pid}] `;
-        trace += `${program} `;
-        trace += `(Finished: ${final_timestamp}s). \n`;
+          /* [STEMN]: Trace script when finishing execution */
+          let final_timestamp = ((new Date() / 1000)).toFixed(3);
+          let duration = (final_timestamp - first_timestamp).toFixed(3);
+          let trace = "";
+          trace += `[${proc.pid}]\t`;
+          trace += `>END<\t`;
+          trace += `${program}\t`;
+          trace += `[${final_timestamp}]\t`;
+          trace += `[${duration}]\t`;
+          trace += `${cwd}\n`;
 
         // only log it if the subprocess has ".sh"
         if(program.indexOf(".sh") > -1) {
@@ -134,7 +141,7 @@ export function spawn(
           csv_line += `${proc.pid},`;
           csv_line += `\"${program}\",`
           csv_line += `${first_timestamp},`
-          csv_line += `${final_timestamp},`
+          csv_line += `${duration},`
           csv_line += `\"${key}\"\n`;
 
           benchmark(csv_line);

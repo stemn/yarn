@@ -362,14 +362,16 @@ export async function execCommand({
 
   /* [STEMN]: Trace execCommand start execution time */
   let first_timestamp = (new Date() / 1000).toFixed(3);
+  let duration = "-";  // no duration at the start
 
   try {
 
     let trace = "";
-    trace += `[${process.pid}] `;
-    trace += `|BEGIN|\t\t`;
-    trace += `${first_timestamp}\t`;
-    trace += `[${stage}]\t\t\t`;
+    trace += `[${process.pid}]\t`;
+    trace += `|BEGIN|\t`;
+    trace += `[${stage}]\t`;
+    trace += `[${first_timestamp}]\t`;
+    trace += `[${duration}]\t`;
     trace += `[${cwd}]\n`;
 
     debug(trace);
@@ -393,15 +395,15 @@ export async function execCommand({
 
     //var trace = `[${process.ppid}]->[${process.pid}][${process.uptime()}] >END<`
 
-    let final_timestamp = ((new Date() / 1000) - first_timestamp).toFixed(3);
+    let final_timestamp = ((new Date() / 1000).toFixed(3));
+    let duration = (final_timestamp - first_timestamp).toFixed(2);
     let trace = "";
-    trace += `[${process.pid}]`;
-    trace += `[${process.uptime()}] `;
-    trace += `>END<\t\t`;
-    trace += `${final_timestamp}\t`;
-    trace += `[${stage}]`;
-    //trace += `\t\t\t[${cwd}]`;
-    trace += "\n";
+    trace += `[${process.pid}]\t`;
+    trace += `>END<\t`;
+    trace += `[${stage}]\t`;
+    trace += `[${final_timestamp}]\t`;
+    trace += `[${duration}]\t`;
+    trace += `[${cwd}]\n`;
 
     debug(trace);
 
@@ -410,7 +412,7 @@ export async function execCommand({
     csv_line = `${process.pid},`;
     csv_line += `\"${stage}\",`;
     csv_line += `${first_timestamp},`;
-    csv_line += `${final_timestamp},`;
+    csv_line += `${duration},`;
     csv_line += `\"${cwd}\"\n`;
     benchmark(csv_line);
   }

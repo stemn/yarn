@@ -23,7 +23,7 @@ import inquirer from 'inquirer';
 import Table from 'cli-table3';
 
 // STEMN import
-import {benchmark, debug} from '../../cli/logging.js';
+import {benchmark, debug, post_process} from '../../cli/logging.js';
 const fs = require('fs');
 
 const {inspect} = require('util');
@@ -206,6 +206,7 @@ export default class ConsoleReporter extends BaseReporter {
     this.log(this._prependEmoji(msg, '✨'));
 
     this._logCategory('LOGGING', 'magenta', "Post-processing logs into suitable format...");
+    post_process();
     this._logCategory('LOGGING', 'magenta', "Output file: " + this.format.underline(log_location));
   }
 
