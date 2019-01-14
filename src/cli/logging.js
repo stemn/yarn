@@ -20,20 +20,16 @@ export function post_process() {
   let log_location = process.env["YARN_DEBUG_PATH"] || "/tmp/debug.log";
   let output = "/tmp/span-debug.log";
 
-  var results = [];
-  var depth = 1;
-  var input = rl.createInterface({
-    input: fs.createReadStream(log_location)
-  });
+  console.error("DOING POST-PROCESSING on " + log_location + "\n");
+  let depth = 1; 
+  let results = fs.readFile(log_location, function() {} ).split("\n");
 
-  // iterate over lines of input
-  input.on('line', function(line) {
-    results.push(line);
-  });
+  console.log(results);
 
   // write output from array
   let out = fs.createWriteStream(output);
   out.on('error', function(err) { console.error("Oops, output span error !!!\n") });
-  results.forEach(function(s) { out.write(s.join('')); });
-  out.end();
+  results.forEach(s => out.write(s));
+
+  console.error("FINISHED POST-PROCESSING\n");
 }
