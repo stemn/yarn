@@ -367,11 +367,11 @@ export async function execCommand({
   try {
 
     let trace = "";
-    trace += `[${process.pid}]\t`;
-    trace += `|BEGIN|\t`;
-    trace += `[${stage}]\t`;
-    //trace += `[${first_timestamp}]\t`;
-    trace += `[${duration}]\t`;
+    trace += `[${process.pid}],`;
+    trace += `BEGIN,`;
+    trace += `[${stage}],`;
+    //trace += `[${first_timestamp}],`;
+    trace += `[${duration}],`;
     trace += `[${cwd}]\n`;
 
     debug(trace);
@@ -398,11 +398,11 @@ export async function execCommand({
     let final_timestamp = ((new Date() / 1000).toFixed(3));
     let duration = (final_timestamp - first_timestamp).toFixed(2);
     let trace = "";
-    trace += `[${process.pid}]\t`;
-    trace += `>END<\t`;
-    trace += `[${stage}]\t`;
-    //trace += `[${final_timestamp}]\t`;
-    trace += `[${duration}]\t`;
+    trace += `[${process.pid}],`;
+    trace += `END,`;
+    trace += `[${stage}],`;
+    //trace += `[${final_timestamp}],`;
+    trace += `[${duration}],`;
     trace += `[${cwd}]\n`;
 
     debug(trace);

@@ -1,5 +1,8 @@
 const fs = require('fs');
 const rl = require("readline");
+const spawn = require('child_process').spawnSync;
+
+
 
 // outputs a string to the main CSV file
 export function benchmark(str: string) {
@@ -19,10 +22,16 @@ export function debug(str: string) {
 export function post_process() {
   let log_location = process.env["YARN_DEBUG_PATH"] || "/tmp/debug.log";
 
-  let results = fs.readFileSync(log_location, 'utf8').split("\n");
+  // run $(column) on data and resave to file
+  let results = [];
+  let child = spawn("column", ["-c 5", "-s ','", "-t", log_location]);
+  results = child.stdout.toString().split("\n");
+
+  //let results = fs.readFileSync(log_location, 'utf8').split("\n");
+  console.error(results);
   results = results.filter(String);   // remove empty string
 
-
+/*
   let depth = 1; 
   results.forEach( function(s, index) {
 
@@ -55,6 +64,7 @@ export function post_process() {
     console.error(results[index]);
 
   });
+*/
 
   // write output from array
   let out = fs.createWriteStream(log_location);

@@ -84,11 +84,11 @@ export function spawn(
         // if we ever decide to do parent-child relationships
         // trace += `${process.ppid } spawned ${process.pid} spawned ${proc.pid}`
 
-        trace += `[${proc.pid}]\t`;
-        trace += `|BEGIN|\t`;
-        trace += `[${program}]\t`;
-        //trace += `[${first_timestamp}]\t`;
-        trace += `[${duration}]\t`;
+        trace += `[${proc.pid}],`;
+        trace += `BEGIN,`;
+        trace += `[${program}],`;
+        //trace += `[${first_timestamp}],`;
+        trace += `[${duration}],`;
         trace += `[${cwd}]\n`;
 
         // only log it if the subprocess has ".sh"
@@ -125,12 +125,12 @@ export function spawn(
           let final_timestamp = ((new Date() / 1000)).toFixed(3);
           let duration = (final_timestamp - first_timestamp).toFixed(3);
           let trace = "";
-          trace += `[${proc.pid}]\t`;
-          trace += `>END<\t`;
-          trace += `${program}\t`;
-          //trace += `[${final_timestamp}]\t`;
-          trace += `[${duration}]\t`;
-          trace += `${cwd}\n`;
+          trace += `[${proc.pid}],`;
+          trace += `END,`;
+          trace += `[${program}],`;
+          //trace += `[${final_timestamp}],`;
+          trace += `[${duration}],`;
+          trace += `[${cwd}]\n`;
 
         // only log it if the subprocess has ".sh"
         if(program.indexOf(".sh") > -1) {
