@@ -22,16 +22,13 @@ export function debug(str: string) {
 export function post_process() {
   let log_location = process.env["YARN_DEBUG_PATH"] || "/tmp/debug.log";
 
-  // run $(column) on data and resave to file
+  // run $(column) on data and
   let results = [];
-  let child = spawn("column", ["-c 5", "-s ','", "-t", log_location]);
+  let child = spawn("column", ["-s", "," , "-t", log_location]);
   results = child.stdout.toString().split("\n");
 
-  //let results = fs.readFileSync(log_location, 'utf8').split("\n");
-  console.error(results);
   results = results.filter(String);   // remove empty string
 
-/*
   let depth = 1; 
   results.forEach( function(s, index) {
 
@@ -59,15 +56,19 @@ export function post_process() {
       depth--;
     } else { throw new Error('Regex mismatch !'); }
     
-    //results[index] = results[index].replace(/\|BEGIN\|\t/, "");
-    //results[index] = results[index].replace(/\>END\<\t/, '');
-    console.error(results[index]);
 
   });
-*/
 
-  // write output from array
-  let out = fs.createWriteStream(log_location);
-  out.on('error', function(err) { console.error("Oops, output span error !!!\n") });
-  results.forEach(s => out.write(s + "\n"));
+  // change BEGIN and END to new separators
+  results.forEach( function(s, index) {
+    results[index] = results[index].replace(/ *(BEGIN|END) */,"^"); 
+    console.error(results[index]);
+  });
+
+  // run column a second time
+  child = spawn("column", ["-s", "^", "-t"], {input: results.join("\n") + "\n"});
+
+  // write output to file
+  fs.writeFileSync(log_location, child.stdout.toString(), function(err){if (err) throw err;});
+
 }
