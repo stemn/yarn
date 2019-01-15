@@ -87,7 +87,7 @@ export function spawn(
         trace += `[${proc.pid}]\t`;
         trace += `|BEGIN|\t`;
         trace += `[${program}]\t`;
-        trace += `[${first_timestamp}]\t`;
+        //trace += `[${first_timestamp}]\t`;
         trace += `[${duration}]\t`;
         trace += `[${cwd}]\n`;
 
@@ -128,7 +128,7 @@ export function spawn(
           trace += `[${proc.pid}]\t`;
           trace += `>END<\t`;
           trace += `${program}\t`;
-          trace += `[${final_timestamp}]\t`;
+          //trace += `[${final_timestamp}]\t`;
           trace += `[${duration}]\t`;
           trace += `${cwd}\n`;
 

@@ -50,7 +50,8 @@ export function post_process() {
       depth--;
     } else { throw new Error('Regex mismatch !'); }
     
-    results[index] = results[index].replace(/\|BEGIN\|/, "").replace("/\>END\</",'');
+    //results[index] = results[index].replace(/\|BEGIN\|\t/, "");
+    //results[index] = results[index].replace(/\>END\<\t/, '');
     console.error(results[index]);
 
   });

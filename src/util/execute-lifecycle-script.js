@@ -370,7 +370,7 @@ export async function execCommand({
     trace += `[${process.pid}]\t`;
     trace += `|BEGIN|\t`;
     trace += `[${stage}]\t`;
-    trace += `[${first_timestamp}]\t`;
+    //trace += `[${first_timestamp}]\t`;
     trace += `[${duration}]\t`;
     trace += `[${cwd}]\n`;
 
@@ -401,7 +401,7 @@ export async function execCommand({
     trace += `[${process.pid}]\t`;
     trace += `>END<\t`;
     trace += `[${stage}]\t`;
-    trace += `[${final_timestamp}]\t`;
+    //trace += `[${final_timestamp}]\t`;
     trace += `[${duration}]\t`;
     trace += `[${cwd}]\n`;
 
