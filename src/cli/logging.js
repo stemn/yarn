@@ -7,14 +7,12 @@ const spawn = require('child_process').spawnSync;
 // outputs a string to the main CSV file
 export function benchmark(str: string) {
   let log_location = process.env["YARN_LOG_PATH"] || "/tmp/yarn.csv";
-  // let log_location = "/stemn/yarn/yarn.csv"
   fs.appendFileSync(log_location, str, function(err){if (err) throw err;});
 }
 
 // outputs a string to the debugging log file
 export function debug(str: string) {
   let log_location = process.env["YARN_DEBUG_PATH"] || "/tmp/debug.log";
-  // let log_location = "/stemn/yarn/debug.log"
   fs.appendFileSync(log_location, str, function(err){if (err) throw err;});
 }
 
@@ -26,6 +24,7 @@ export function post_process() {
   let results = [];
   let child = spawn("column", ["-s", "," , "-t", log_location]);
   results = child.stdout.toString().split("\n");
+  if(!results) { console.error("Make sure console is installed and in $PATH !"); }
 
   results = results.filter(String);   // remove empty string
 
@@ -55,17 +54,14 @@ export function post_process() {
     } else if (s.match("END")) {
       depth--;
     } else { throw new Error('Regex mismatch !'); }
-    
-
   });
 
   // change BEGIN and END to new separators
   results.forEach( function(s, index) {
     results[index] = results[index].replace(/ *(BEGIN|END) */,"^"); 
-    console.error(results[index]);
   });
 
-  // run column a second time
+  // run $(column) a second time
   child = spawn("column", ["-s", "^", "-t"], {input: results.join("\n") + "\n"});
 
   // write output to file
