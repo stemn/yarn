@@ -30,7 +30,7 @@ export function post_process() {
 
     // increase/decrease indent for next line
 
-  }
+  });
 
   // write output from array
   let out = fs.createWriteStream(log_location);
