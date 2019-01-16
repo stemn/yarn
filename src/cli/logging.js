@@ -24,7 +24,7 @@ export function post_process() {
   let results = [];
   let child = spawn("column", ["-s", "," , "-t", log_location]);
   results = child.stdout.toString().split("\n");
-  if(!results) { console.error("Make sure console is installed and in $PATH !"); }
+  if(!results) { console.error("Make sure column is installed and in $PATH !"); }
 
   results = results.filter(String);   // remove empty string
 
