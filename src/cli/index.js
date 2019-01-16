@@ -27,7 +27,9 @@ import {boolify, boolifyWithDefault} from '../util/conversion.js';
 
 // STEMN import
 import {benchmark, debug} from './logging.js';
-var jaeger = require("./jaeger.js");
+//var jaeger = require("./jaeger.js");
+var opentracing = require('opentracing');
+import {initTracer, statusTracer, closeTracer} from './jaeger.js';
 
 
 function findProjectRoot(base: string): string {
@@ -257,8 +259,7 @@ export async function main({
 
   if (shouldWrapOutput) {
     reporter.header(commandName, {name: 'yarn', version});
-
-    //jaeger.setTracer(jaeger.initTracer("yarn"));
+    opentracing.initGlobalTracer(initTracer("yarn"));
 
   }
 
@@ -297,9 +298,12 @@ export async function main({
     return command.run(config, reporter, commander, commander.args).then(exitCode => {
       if (shouldWrapOutput) {
           reporter.footer(false);
-          //main_tracer.close(() => process.exit());
-          jaeger.statusTracer();
-          jaeger.closeTracer();
+
+         const tracer = opentracing.globalTracer();
+         console.error(tracer);
+         tracer.close(); 
+         // statusTracer();
+         // closeTracer();
           console.error("This runs once, and only after the other stuff has finished !");
       }
 

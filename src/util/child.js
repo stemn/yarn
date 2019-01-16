@@ -8,8 +8,8 @@ import {promisify} from './promise.js';
 
 // STEMN import
 import {benchmark, debug} from '../cli/logging.js';
-var jaeger = require("../cli/jaeger.js");
-
+//import {statusTracer} from '../cli/jaeger.js';
+var opentracing = require('opentracing');
 
 
 const child = require('child_process');
@@ -82,7 +82,21 @@ export function spawn(
         /* -------------- JAEGER ------------- */
         //const tracer = initTracer(program);
         /* ----------------------------------- */
-        jaeger.statusTracer();
+        //statusTracer();
+
+        const tracer = opentracing.globalTracer();
+        console.error(tracer);
+        /*
+        const span = tracer.startSpan("test");
+        span.setTag("hello-to", "TAGTAGTAG");
+        span.log({
+          event: "string-format",
+          value: "logtest !",
+        });
+        console.error(span);
+        span.finish();
+*/
+
         let first_timestamp = (new Date() / 1000);
         let trace = "";
         let duration = "-";
