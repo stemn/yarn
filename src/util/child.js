@@ -8,6 +8,9 @@ import {promisify} from './promise.js';
 
 // STEMN import
 import {benchmark, debug} from '../cli/logging.js';
+var jaeger = require("../cli/jaeger.js");
+
+
 
 const child = require('child_process');
 
@@ -76,6 +79,10 @@ export function spawn(
         const proc = child.spawn(program, args, opts);
         spawnedProcesses[key] = proc;
 
+        /* -------------- JAEGER ------------- */
+        //const tracer = initTracer(program);
+        /* ----------------------------------- */
+        jaeger.statusTracer();
         let first_timestamp = (new Date() / 1000);
         let trace = "";
         let duration = "-";
@@ -145,6 +152,10 @@ export function spawn(
           csv_line += `\"${key}\"\n`;
 
           benchmark(csv_line);
+
+          /* -------------- JAEGER ------------- */
+          //tracer.close(() => process.exit());
+          /* ----------------------------------- */
         }
 
           if (err) {

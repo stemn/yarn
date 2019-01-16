@@ -27,6 +27,8 @@ import {boolify, boolifyWithDefault} from '../util/conversion.js';
 
 // STEMN import
 import {benchmark, debug} from './logging.js';
+var jaeger = require("./jaeger.js");
+
 
 function findProjectRoot(base: string): string {
   let prev = null;
@@ -61,6 +63,7 @@ export async function main({
 
   loudRejection();
   handleSignals();
+
 
   // set global options
   commander.version(version, '-v, --version');
@@ -254,7 +257,13 @@ export async function main({
 
   if (shouldWrapOutput) {
     reporter.header(commandName, {name: 'yarn', version});
+
+    //jaeger.setTracer(jaeger.initTracer("yarn"));
+
   }
+
+
+
 
   if (commander.nodeVersionCheck && !semver.satisfies(process.versions.node, constants.SUPPORTED_NODE_VERSIONS)) {
     reporter.warn(reporter.lang('unsupportedNodeVersion', process.versions.node, constants.SUPPORTED_NODE_VERSIONS));
@@ -287,11 +296,14 @@ export async function main({
 
     return command.run(config, reporter, commander, commander.args).then(exitCode => {
       if (shouldWrapOutput) {
-        reporter.footer(false);
+          reporter.footer(false);
+          //main_tracer.close(() => process.exit());
+          jaeger.statusTracer();
+          jaeger.closeTracer();
+          console.error("This runs once, and only after the other stuff has finished !");
       }
 
       /* [STEMN]: Possible hook here for exitCode conditional code */
-
 
       return exitCode;
     });
