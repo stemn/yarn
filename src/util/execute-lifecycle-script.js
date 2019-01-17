@@ -11,9 +11,6 @@ import {registries} from '../resolvers/index.js';
 import {fixCmdWinSlashes} from './fix-cmd-win-slashes.js';
 import {getBinFolder as getGlobalBinFolder, run as globalRun} from '../cli/commands/global.js';
 
-// STEMN import
-import {benchmark, debug} from '../cli/logging.js';
-
 const path = require('path');
 
 export type LifecycleReturn = Promise<{
@@ -359,23 +356,7 @@ export async function execCommand({
   customShell?: string,
 }): Promise<void> {
   const {reporter} = config;
-
-  /* [STEMN]: Trace execCommand start execution time */
-  let first_timestamp = (new Date() / 1000).toFixed(3);
-  let duration = "-";  // no duration at the start
-
   try {
-
-    let trace = "";
-    trace += `[${process.pid}],`;
-    trace += `BEGIN,`;
-    trace += `[${stage}],`;
-    //trace += `[${first_timestamp}],`;
-    trace += `[${duration}],`;
-    trace += `[${cwd}]\n`;
-
-    debug(trace);
-
     reporter.command(cmd);
     await executeLifecycleScript({stage, config, cwd, cmd, isInteractive, customShell});
     return Promise.resolve();
@@ -389,31 +370,5 @@ export async function execCommand({
     } else {
       throw err;
     }
-  } finally {
-
-    /* [STEMN]: Trace execCommand finish exeuction  time */
-
-    //var trace = `[${process.ppid}]->[${process.pid}][${process.uptime()}] >END<`
-
-    let final_timestamp = ((new Date() / 1000).toFixed(3));
-    let duration = (final_timestamp - first_timestamp).toFixed(2);
-    let trace = "";
-    trace += `[${process.pid}],`;
-    trace += `END,`;
-    trace += `[${stage}],`;
-    //trace += `[${final_timestamp}],`;
-    trace += `[${duration}],`;
-    trace += `[${cwd}]\n`;
-
-    debug(trace);
-
-    // PID, STAGE, TIMESTAMP, DURATION, CWD
-    let csv_line = "";
-    csv_line = `${process.pid},`;
-    csv_line += `\"${stage}\",`;
-    csv_line += `${first_timestamp},`;
-    csv_line += `${duration},`;
-    csv_line += `\"${cwd}\"\n`;
-    benchmark(csv_line);
   }
 }

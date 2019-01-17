@@ -6,12 +6,6 @@ import BlockingQueue from './blocking-queue.js';
 import {ProcessSpawnError, ProcessTermError} from '../errors.js';
 import {promisify} from './promise.js';
 
-// STEMN import
-import {benchmark, debug} from '../cli/logging.js';
-//import {statusTracer} from '../cli/jaeger.js';
-var opentracing = require('opentracing');
-
-
 const child = require('child_process');
 
 export const queue = new BlockingQueue('child', constants.CHILD_CONCURRENCY);
@@ -64,7 +58,6 @@ type ProcessFn = (
   done: () => void,
 ) => void;
 
-/* [STEMN]: Trace for subprocesses ie. script files */
 export function spawn(
   program: string,
   args: Array<string>,
@@ -78,44 +71,6 @@ export function spawn(
       new Promise((resolve, reject) => {
         const proc = child.spawn(program, args, opts);
         spawnedProcesses[key] = proc;
-
-        /* -------------- JAEGER ------------- */
-        //const tracer = initTracer(program);
-        /* ----------------------------------- */
-        //statusTracer();
-
-        //const tracer = opentracing.globalTracer();
-        //console.error(tracer);
-        /*
-        const span = tracer.startSpan("test");
-        span.setTag("hello-to", "TAGTAGTAG");
-        span.log({
-          event: "string-format",
-          value: "logtest !",
-        });
-        console.error(span);
-        span.finish();
-*/
-
-        let first_timestamp = (new Date() / 1000);
-        let trace = "";
-        let duration = "-";
-        let cwd = key;
-
-        // if we ever decide to do parent-child relationships
-        // trace += `${process.ppid } spawned ${process.pid} spawned ${proc.pid}`
-
-        trace += `[${proc.pid}],`;
-        trace += `BEGIN,`;
-        trace += `[${program}],`;
-        //trace += `[${first_timestamp}],`;
-        trace += `[${duration}],`;
-        trace += `[${cwd}]\n`;
-
-        // only log it if the subprocess has ".sh"
-        if(program.indexOf(".sh") > -1) {
-          debug(trace);
-        }
 
         let processingDone = false;
         let processClosed = false;
@@ -140,38 +95,6 @@ export function spawn(
 
         function finish() {
           delete spawnedProcesses[key];
-
-
-          /* [STEMN]: Trace script when finishing execution */
-          let final_timestamp = ((new Date() / 1000)).toFixed(3);
-          let duration = (final_timestamp - first_timestamp).toFixed(3);
-          let trace = "";
-          trace += `[${proc.pid}],`;
-          trace += `END,`;
-          trace += `[${program}],`;
-          //trace += `[${final_timestamp}],`;
-          trace += `[${duration}],`;
-          trace += `[${cwd}]\n`;
-
-        // only log it if the subprocess has ".sh"
-        if(program.indexOf(".sh") > -1) {
-          debug(trace);
-
-          // Add the finished process to the stack for printing
-          let csv_line = "";
-          csv_line += `${proc.pid},`;
-          csv_line += `\"${program}\",`
-          csv_line += `${first_timestamp},`
-          csv_line += `${duration},`
-          csv_line += `\"${key}\"\n`;
-
-          benchmark(csv_line);
-
-          /* -------------- JAEGER ------------- */
-          //tracer.close(() => process.exit());
-          /* ----------------------------------- */
-        }
-
           if (err) {
             reject(err);
           } else {

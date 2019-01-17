@@ -22,12 +22,6 @@ import {sortTrees, recurseTree, getFormattedOutput} from './helpers/tree-helper.
 import inquirer from 'inquirer';
 import Table from 'cli-table3';
 
-// STEMN import
-import {benchmark, debug, post_process} from '../../cli/logging.js';
-import {getTracer} from '../../cli/tracing.js';
-var opentracing = require('opentracing');
-const fs = require('fs');
-
 const {inspect} = require('util');
 const readline = require('readline');
 const chalk = require('chalk');
@@ -165,67 +159,12 @@ export default class ConsoleReporter extends BaseReporter {
     }
   }
 
- /* [STEMN]: header reporter. Hook to clean logs */
   header(command: string, pkg: Package) {
     this.log(this.format.bold(`${pkg.name} ${command} v${pkg.version}`));
-
-    if(!process.env.YARN_LOG_PATH) {
-      this._logCategory('LOGGING', 'magenta', "YARN_LOG_PATH env var not found.\tDefaulting to \'/tmp/yarn.csv\'");
-    }
-
-    if(!process.env.YARN_DEBUG_PATH) {
-      this._logCategory('LOGGING', 'magenta', "YARN_DEBUG_PATH env var not found.\tDefaulting to \'/tmp/debug.log\'");
-    }
-
-		// we perform our own reporting as well
-    this._logCategory('LOGGING', 'magenta', "Cleaning logs of previous run...");
-    this._logCategory('LOGGING', 'magenta', "Truncating and preparing log file...");
-    let log_location = process.env["YARN_LOG_PATH"] || "/tmp/yarn.csv";
-    let debug_location = process.env["YARN_DEBUG_PATH"] || "/tmp/debug.log";
-
-    fs.writeFile(log_location, '', function(){})
-    fs.writeFile(debug_location, '', function(){})
-
-    var csv_header = "PID,Command,Timestamp,Duration,PWD\n";
-    fs.writeFileSync(log_location, csv_header, function (err) {
-        if (err) throw err;
-    });
-
-    const tracer = getTracer();
-
-
-/*
-    console.error("Starting the trace...");
-    const tracer = initTracer("yarn");
-    console.error("global init of yarn " + process.pid);
-
-    opentracing.initGlobalTracer(tracer);
-
-    process.on("exit", () => {
-      console.error("Closing tracer " + process.pid);
-      tracer.close();
-    })
-
-    process.on("error", () => {
-      conosle.error("Tracer prematurely closed due to error");
-      tracer.close();
-    })
-
-    process.on("SIGINT", () => {
-      console.error("Tracer prematurely closed due to interrupt " + process.pid);
-      process.exit();
-    })
-
-    tracer.close();
-    */ 
-
   }
 
-/* [STEMN]: footer reporter. Hook to do log post-processing */
   footer(showPeakMemory?: boolean) {
     this.stopProgress();
-
-    let log_location = process.env["YARN_LOG_PATH"] || "/tmp/yarn.csv";
 
     const totalTime = (this.getTotalTime() / 1000).toFixed(2);
     let msg = `Done in ${totalTime}s.`;
@@ -234,15 +173,6 @@ export default class ConsoleReporter extends BaseReporter {
       msg += ` Peak memory usage ${peakMemory}MB.`;
     }
     this.log(this._prependEmoji(msg, '✨'));
-
-    this._logCategory('LOGGING', 'magenta', "Post-processing logs into suitable format...");
-    post_process();
-    this._logCategory('LOGGING', 'magenta', "Output file: " + this.format.underline(log_location));
-
-
-    const tracer = getTracer();
-    tracer.close();
-
   }
 
   log(msg: string, {force = false}: {force?: boolean} = {}) {
