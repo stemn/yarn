@@ -84,8 +84,8 @@ export function spawn(
         /* ----------------------------------- */
         //statusTracer();
 
-        const tracer = opentracing.globalTracer();
-        console.error(tracer);
+        //const tracer = opentracing.globalTracer();
+        //console.error(tracer);
         /*
         const span = tracer.startSpan("test");
         span.setTag("hello-to", "TAGTAGTAG");

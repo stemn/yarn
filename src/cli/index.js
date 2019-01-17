@@ -27,9 +27,8 @@ import {boolify, boolifyWithDefault} from '../util/conversion.js';
 
 // STEMN import
 import {benchmark, debug} from './logging.js';
-//var jaeger = require("./jaeger.js");
 var opentracing = require('opentracing');
-import {initTracer, statusTracer, closeTracer} from './jaeger.js';
+import {initTracer} from './jaeger.js';
 
 
 function findProjectRoot(base: string): string {
@@ -139,6 +138,28 @@ export async function main({
     process.exitCode = 0;
     return;
   }
+
+/*
+    const tracer = initTracer("yarn");
+    console.error("global init of yarn " + process.pid);
+
+    opentracing.initGlobalTracer(tracer);
+
+    process.on("exit", () => {
+      console.error("Closing tracer " + process.pid);
+      tracer.close();
+    })
+
+    process.on("error", () => {
+      conosle.error("Tracer prematurely closed due to error");
+      tracer.close();
+    })
+
+    process.on("SIGINT", () => {
+      console.error("Tracer prematurely closed due to interrupt " + process.pid);
+      process.exit();
+    })
+*/
 
   // get command name
   const firstNonFlagIndex = args.findIndex((arg, idx, arr) => {
@@ -255,15 +276,30 @@ export async function main({
   const outputWrapperEnabled = boolifyWithDefault(process.env.YARN_WRAP_OUTPUT, true);
   const shouldWrapOutput = outputWrapperEnabled && !commander.json && command.hasWrapper(commander, commander.args);
 
-  
-
+  /* [STEMN]: Initialize the tracer here */
   if (shouldWrapOutput) {
     reporter.header(commandName, {name: 'yarn', version});
-    opentracing.initGlobalTracer(initTracer("yarn"));
 
+/*
+    const tracer = initTracer("yarn");
+    opentracing.initGlobalTracer(tracer);
+
+    process.on("exit", () => {
+      console.error("Closing tracer");
+      tracer.close();
+    })
+
+    process.on("error", () => {
+      conosle.error("Tracer prematurely closed due to error");
+      tracer.close();
+    })
+
+    process.on("SIGINT", () => {
+      conosle.error("Tracer prematurely closed due to interrupt");
+      tracer.close();
+    })
+*/
   }
-
-
 
 
   if (commander.nodeVersionCheck && !semver.satisfies(process.versions.node, constants.SUPPORTED_NODE_VERSIONS)) {
@@ -298,17 +334,9 @@ export async function main({
     return command.run(config, reporter, commander, commander.args).then(exitCode => {
       if (shouldWrapOutput) {
           reporter.footer(false);
-
-         const tracer = opentracing.globalTracer();
-         console.error(tracer);
-         tracer.close(); 
-         // statusTracer();
-         // closeTracer();
-          console.error("This runs once, and only after the other stuff has finished !");
       }
 
       /* [STEMN]: Possible hook here for exitCode conditional code */
-
       return exitCode;
     });
   };

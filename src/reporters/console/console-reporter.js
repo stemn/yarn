@@ -24,6 +24,8 @@ import Table from 'cli-table3';
 
 // STEMN import
 import {benchmark, debug, post_process} from '../../cli/logging.js';
+import {getTracer} from '../../cli/tracing.js';
+var opentracing = require('opentracing');
 const fs = require('fs');
 
 const {inspect} = require('util');
@@ -189,6 +191,34 @@ export default class ConsoleReporter extends BaseReporter {
         if (err) throw err;
     });
 
+    const tracer = getTracer();
+
+
+/*
+    console.error("Starting the trace...");
+    const tracer = initTracer("yarn");
+    console.error("global init of yarn " + process.pid);
+
+    opentracing.initGlobalTracer(tracer);
+
+    process.on("exit", () => {
+      console.error("Closing tracer " + process.pid);
+      tracer.close();
+    })
+
+    process.on("error", () => {
+      conosle.error("Tracer prematurely closed due to error");
+      tracer.close();
+    })
+
+    process.on("SIGINT", () => {
+      console.error("Tracer prematurely closed due to interrupt " + process.pid);
+      process.exit();
+    })
+
+    tracer.close();
+    */ 
+
   }
 
 /* [STEMN]: footer reporter. Hook to do log post-processing */
@@ -208,6 +238,11 @@ export default class ConsoleReporter extends BaseReporter {
     this._logCategory('LOGGING', 'magenta', "Post-processing logs into suitable format...");
     post_process();
     this._logCategory('LOGGING', 'magenta', "Output file: " + this.format.underline(log_location));
+
+
+    const tracer = getTracer();
+    tracer.close();
+
   }
 
   log(msg: string, {force = false}: {force?: boolean} = {}) {
