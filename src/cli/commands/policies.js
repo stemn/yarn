@@ -47,10 +47,8 @@ async function fetchReleases(
   config: Config,
   {includePrereleases = false}: FetchReleasesOptions = {},
 ): Promise<Array<Release>> {
-  const token = process.env.GITHUB_TOKEN;
-  const tokenUrlParameter = token ? `?access_token=${token}` : '';
   const request: Array<Release> = await config.requestManager.request({
-    url: `https://api.github.com/repos/yarnpkg/yarn/releases${tokenUrlParameter}`,
+    url: `https://api.github.com/repos/yarnpkg/yarn/releases`,
     json: true,
   });
 

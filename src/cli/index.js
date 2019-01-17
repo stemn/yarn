@@ -25,6 +25,9 @@ import {version} from '../util/yarn-version.js';
 import handleSignals from '../util/signal-handler.js';
 import {boolify, boolifyWithDefault} from '../util/conversion.js';
 
+// STEMN import
+import {benchmark, debug} from './logging.js';
+
 function findProjectRoot(base: string): string {
   let prev = null;
   let dir = base;
@@ -41,6 +44,7 @@ function findProjectRoot(base: string): string {
   return base;
 }
 
+/* [STEMN]: main function here (multiple threads executed) */
 export async function main({
   startArgs,
   args,
@@ -246,6 +250,8 @@ export async function main({
   const outputWrapperEnabled = boolifyWithDefault(process.env.YARN_WRAP_OUTPUT, true);
   const shouldWrapOutput = outputWrapperEnabled && !commander.json && command.hasWrapper(commander, commander.args);
 
+  
+
   if (shouldWrapOutput) {
     reporter.header(commandName, {name: 'yarn', version});
   }
@@ -283,6 +289,10 @@ export async function main({
       if (shouldWrapOutput) {
         reporter.footer(false);
       }
+
+      /* [STEMN]: Possible hook here for exitCode conditional code */
+
+
       return exitCode;
     });
   };
@@ -478,6 +488,9 @@ export async function main({
     if (errorReportLoc) {
       reporter.info(reporter.lang('bugReport', errorReportLoc));
     }
+
+    /* [STEMN]: Warn in logs about unexpected error -> inconsistencies */
+    debug(">>>>>>>> WARNING: LOGS MAY BE INCONSISTENT DUE TO ERROR <<<<<<<<\n");
   }
 
   function writeErrorReport(log): ?string {
