@@ -192,6 +192,29 @@ export default class ConsoleReporter extends BaseReporter {
     });
 
     const tracer = getTracer();
+    console.error("Printing tracer and span data");
+    console.error(tracer + "\n\n");
+    const tspan = tracer.startSpan("test-span");
+    tspan.setTag("processID", process.pid);
+    console.error(tspan);
+    console.error("Printing span context!");
+    console.error(tspan.context());
+    console.error(opentracing.FORMAT_TEXT_MAP);
+    console.error(tspan.context()._traceId.toString());
+
+    /*
+    const extracted = tracer.extract("text_map", {"uber-trace-id": "25b8fcc3e69eae9e:25b8fcc3e69eae9e:0:1"});
+    console.error("extracted context:");
+    console.error(extracted);
+
+    */
+
+    const carrier = {};
+    tracer.inject(tspan, opentracing.FORMAT_TEXT_MAP, carrier);
+    console.error(carrier);
+
+    tspan.finish();
+    console.error("FINISHED SPAN:");
 
 
 /*
