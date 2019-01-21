@@ -78,10 +78,11 @@ export function spawn(
         const proc = child.spawn(program, args, opts);
         spawnedProcesses[key] = proc;
 
-        console.error("Retrieving carrier: " + program);
-        console.error(process.env['YARN_JAEGER_TRACE']);
+        //console.error("Retrieving carrier: " + program);
+        //console.error(process.env['YARN_JAEGER_TRACE']);
         const carrier = JSON.parse(process.env['YARN_JAEGER_TRACE']);
 
+/*
         let child_tracer = getTracer();
         console.error("New tracer spawned:\t\t" + child_tracer._process.uuid);
 
@@ -89,7 +90,7 @@ export function spawn(
 
         let child_span = child_tracer.startSpan(program, { childOf: context });
         child_span.setTag("cwd", key);
-
+*/
         
 
         let first_timestamp = (new Date() / 1000);
@@ -207,16 +208,20 @@ export function spawn(
             err.EXIT_CODE = code;
           }
 
-          /* [STEMN]: Close the tracers here */
+          /* [STEMN]: Close the spans and tracers here */
           if (processingDone || err) {
+          /*
             child_span.finish();
             console.error("Closing child tracer:\t\t" + child_tracer._process.uuid);
             child_tracer.close();
+            */
             finish();
           } else {
+          /*
             child_span.finish();
             console.error("Closing child tracer:\t\t" + child_tracer._process.uuid);
             child_tracer.close();
+            */
             processClosed = true;
           }
         });

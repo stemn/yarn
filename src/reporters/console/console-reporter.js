@@ -193,6 +193,7 @@ export default class ConsoleReporter extends BaseReporter {
     });
 
     // Begin the root span and save to environment variable
+    /*
     const tracer = getTracer();
     const tspan = tracer.startSpan("test-span");
     tspan.setTag("processID", process.pid);
@@ -204,7 +205,7 @@ export default class ConsoleReporter extends BaseReporter {
     console.log(`Environment varible stores: ${env_value}`);
 
     tspan.finish();
-
+    */
   }
 
 /* [STEMN]: footer reporter. Hook to do log post-processing */
@@ -225,9 +226,10 @@ export default class ConsoleReporter extends BaseReporter {
     post_process();
     this._logCategory('LOGGING', 'magenta', "Output file: " + this.format.underline(log_location));
 
-
+    /*
     const tracer = getTracer();
     tracer.close();
+    */
 
   }
 

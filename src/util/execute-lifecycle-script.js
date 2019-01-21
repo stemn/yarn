@@ -13,6 +13,8 @@ import {getBinFolder as getGlobalBinFolder, run as globalRun} from '../cli/comma
 
 // STEMN import
 import {benchmark, debug} from '../cli/logging.js';
+import {getTracer} from '../cli/tracing.js';
+var opentracing = require('opentracing');
 
 
 const path = require('path');
@@ -365,8 +367,35 @@ export async function execCommand({
   let first_timestamp = (new Date() / 1000).toFixed(3);
   let duration = "-";  // no duration at the start
 
+  // Jaeger start trace
   //console.error("Retrieving carrier :-> " + stage);
   //console.error(process.env['YARN_JAEGER_TRACE']);
+
+
+  let child_tracer = getTracer();
+  let child_span;
+  console.error("(*) New tracer spawned:\t\t" + child_tracer._process.uuid + "\t" + stage);
+
+
+  // If context environment variable was not set previously, set it on this run
+  if(!process.env.YARN_JAEGER_TRACE) {
+     
+    child_span = child_tracer.startSpan(stage);
+
+    const carrier = {};
+    child_tracer.inject(child_span, opentracing.FORMAT_TEXT_MAP, carrier);
+
+    const env_value = JSON.stringify(carrier);
+    process.env['YARN_JAEGER_TRACE'] = env_value;
+  
+  } else { 
+    const carrier = JSON.parse(process.env['YARN_JAEGER_TRACE']);
+    const context = child_tracer.extract(opentracing.FORMAT_TEXT_MAP, carrier);
+    child_span = child_tracer.startSpan(stage, { childOf: context });
+  } 
+
+  child_span.setTag("cmd", cmd);
+  child_span.setTag("cwd", cwd);
 
   try {
 
@@ -419,5 +448,12 @@ export async function execCommand({
     csv_line += `${duration},`;
     csv_line += `\"${cwd}\"\n`;
     benchmark(csv_line);
+
+ 
+    child_span.finish();
+    console.error("(*) Closing child tracer:\t\t" + child_tracer._process.uuid);
+    child_tracer.close();
+
+
   }
 }
