@@ -413,6 +413,11 @@ export async function execCommand({
     await executeLifecycleScript({stage, config, cwd, cmd, isInteractive, customShell});
     return Promise.resolve();
   } catch (err) {
+
+    // STEMN - WIP 
+    child_span.setTag('error','true');
+    child_span.log({'event': 'error', 'level': 'error', 'reason': err});
+
     if (err instanceof ProcessTermError) {
       throw new MessageError(
         err.EXIT_SIGNAL
