@@ -134,7 +134,7 @@ export async function main({
 
   // if -v is the first command, then always exit after returning the version
   if (args[0] === '-v') {
-    console.log(version.trim());
+    console.log(version.trim() + " [TRACING]");
     process.exitCode = 0;
     return;
   }
