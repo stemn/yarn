@@ -83,9 +83,14 @@ export function spawn(
         const carrier = JSON.parse(process.env['YARN_JAEGER_TRACE']);
 
         let child_tracer = getTracer();
-        console.error("New tracer spawned: " + child_tracer._process.uuid);
+        console.error("New tracer spawned:\t\t" + child_tracer._process.uuid);
 
+        const context = child_tracer.extract(opentracing.FORMAT_TEXT_MAP, carrier);
 
+        let child_span = child_tracer.startSpan(program, { childOf: context });
+        child_span.setTag("cwd", key);
+
+        
 
         let first_timestamp = (new Date() / 1000);
         let trace = "";
@@ -157,10 +162,6 @@ export function spawn(
 
           benchmark(csv_line);
 
-          /* -------------- JAEGER ------------- */
-          //console.error("Closing child tracer: " + child_tracer._process.uuid);
-          //child_tracer.close()
-          /* ----------------------------------- */
         }
 
           if (err) {
@@ -206,12 +207,15 @@ export function spawn(
             err.EXIT_CODE = code;
           }
 
+          /* [STEMN]: Close the tracers here */
           if (processingDone || err) {
-              console.error("Closing child tracer: " + child_tracer._process.uuid);
-              child_tracer.close();
+            child_span.finish();
+            console.error("Closing child tracer:\t\t" + child_tracer._process.uuid);
+            child_tracer.close();
             finish();
           } else {
-            console.error("Closing child tracer: " + child_tracer._process.uuid);
+            child_span.finish();
+            console.error("Closing child tracer:\t\t" + child_tracer._process.uuid);
             child_tracer.close();
             processClosed = true;
           }
