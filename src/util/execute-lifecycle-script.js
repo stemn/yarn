@@ -14,6 +14,7 @@ import {getBinFolder as getGlobalBinFolder, run as globalRun} from '../cli/comma
 // STEMN import
 import {benchmark, debug} from '../cli/logging.js';
 
+
 const path = require('path');
 
 export type LifecycleReturn = Promise<{
@@ -363,6 +364,9 @@ export async function execCommand({
   /* [STEMN]: Trace execCommand start execution time */
   let first_timestamp = (new Date() / 1000).toFixed(3);
   let duration = "-";  // no duration at the start
+
+  //console.error("Retrieving carrier :-> " + stage);
+  //console.error(process.env['YARN_JAEGER_TRACE']);
 
   try {
 

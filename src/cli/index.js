@@ -139,28 +139,6 @@ export async function main({
     return;
   }
 
-/*
-    const tracer = initTracer("yarn");
-    console.error("global init of yarn " + process.pid);
-
-    opentracing.initGlobalTracer(tracer);
-
-    process.on("exit", () => {
-      console.error("Closing tracer " + process.pid);
-      tracer.close();
-    })
-
-    process.on("error", () => {
-      conosle.error("Tracer prematurely closed due to error");
-      tracer.close();
-    })
-
-    process.on("SIGINT", () => {
-      console.error("Tracer prematurely closed due to interrupt " + process.pid);
-      process.exit();
-    })
-*/
-
   // get command name
   const firstNonFlagIndex = args.findIndex((arg, idx, arr) => {
     const isOption = arg.startsWith('-');

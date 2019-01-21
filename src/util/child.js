@@ -8,9 +8,8 @@ import {promisify} from './promise.js';
 
 // STEMN import
 import {benchmark, debug} from '../cli/logging.js';
-//import {statusTracer} from '../cli/jaeger.js';
 var opentracing = require('opentracing');
-
+import {getTracer} from '../cli/tracing.js';
 
 const child = require('child_process');
 
@@ -79,23 +78,14 @@ export function spawn(
         const proc = child.spawn(program, args, opts);
         spawnedProcesses[key] = proc;
 
-        /* -------------- JAEGER ------------- */
-        //const tracer = initTracer(program);
-        /* ----------------------------------- */
-        //statusTracer();
+        console.error("Retrieving carrier: " + program);
+        console.error(process.env['YARN_JAEGER_TRACE']);
+        const carrier = JSON.parse(process.env['YARN_JAEGER_TRACE']);
 
-        //const tracer = opentracing.globalTracer();
-        //console.error(tracer);
-        /*
-        const span = tracer.startSpan("test");
-        span.setTag("hello-to", "TAGTAGTAG");
-        span.log({
-          event: "string-format",
-          value: "logtest !",
-        });
-        console.error(span);
-        span.finish();
-*/
+        let child_tracer = getTracer();
+        console.error("New tracer spawned: " + child_tracer._process.uuid);
+
+
 
         let first_timestamp = (new Date() / 1000);
         let trace = "";
@@ -168,7 +158,8 @@ export function spawn(
           benchmark(csv_line);
 
           /* -------------- JAEGER ------------- */
-          //tracer.close(() => process.exit());
+          //console.error("Closing child tracer: " + child_tracer._process.uuid);
+          //child_tracer.close()
           /* ----------------------------------- */
         }
 
@@ -216,11 +207,16 @@ export function spawn(
           }
 
           if (processingDone || err) {
+              console.error("Closing child tracer: " + child_tracer._process.uuid);
+              child_tracer.close();
             finish();
           } else {
+            console.error("Closing child tracer: " + child_tracer._process.uuid);
+            child_tracer.close();
             processClosed = true;
           }
         });
+
       }),
   );
 }

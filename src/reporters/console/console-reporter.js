@@ -177,6 +177,7 @@ export default class ConsoleReporter extends BaseReporter {
       this._logCategory('LOGGING', 'magenta', "YARN_DEBUG_PATH env var not found.\tDefaulting to \'/tmp/debug.log\'");
     }
 
+      this._logCategory('LOGGING', 'magenta', "env: YARN_JAEGER_TRACE will be used to store the traceID for the root span, " +  this.format.bold('DO NOT OVERWRITE'));
 		// we perform our own reporting as well
     this._logCategory('LOGGING', 'magenta', "Cleaning logs of previous run...");
     this._logCategory('LOGGING', 'magenta', "Truncating and preparing log file...");
@@ -191,56 +192,18 @@ export default class ConsoleReporter extends BaseReporter {
         if (err) throw err;
     });
 
+    // Begin the root span and save to environment variable
     const tracer = getTracer();
-    console.error("Printing tracer and span data");
-    console.error(tracer + "\n\n");
     const tspan = tracer.startSpan("test-span");
     tspan.setTag("processID", process.pid);
-    console.error(tspan);
-    console.error("Printing span context!");
-    console.error(tspan.context());
-    console.error(opentracing.FORMAT_TEXT_MAP);
-    console.error(tspan.context()._traceId.toString());
-
-    /*
-    const extracted = tracer.extract("text_map", {"uber-trace-id": "25b8fcc3e69eae9e:25b8fcc3e69eae9e:0:1"});
-    console.error("extracted context:");
-    console.error(extracted);
-
-    */
 
     const carrier = {};
     tracer.inject(tspan, opentracing.FORMAT_TEXT_MAP, carrier);
-    console.error(carrier);
+    const env_value = JSON.stringify(carrier);
+    process.env['YARN_JAEGER_TRACE'] = env_value;
+    console.log(`Environment varible stores: ${env_value}`);
 
     tspan.finish();
-    console.error("FINISHED SPAN:");
-
-
-/*
-    console.error("Starting the trace...");
-    const tracer = initTracer("yarn");
-    console.error("global init of yarn " + process.pid);
-
-    opentracing.initGlobalTracer(tracer);
-
-    process.on("exit", () => {
-      console.error("Closing tracer " + process.pid);
-      tracer.close();
-    })
-
-    process.on("error", () => {
-      conosle.error("Tracer prematurely closed due to error");
-      tracer.close();
-    })
-
-    process.on("SIGINT", () => {
-      console.error("Tracer prematurely closed due to interrupt " + process.pid);
-      process.exit();
-    })
-
-    tracer.close();
-    */ 
 
   }
 
