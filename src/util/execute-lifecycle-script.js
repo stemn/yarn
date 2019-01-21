@@ -416,14 +416,19 @@ export async function execCommand({
 
     // STEMN - WIP 
     child_span.setTag('error','true');
-    child_span.log({'event': 'error', 'level': 'error', 'reason': err});
 
-    if (err instanceof ProcessTermError) {
+  if (err instanceof ProcessTermError) {
+
+      // add our own error messages to Jaeger
+      let reason = `Failed with exit code ${err.EXIT_CODE} and exit signal ${err.EXIT_SIGNAL}`;
+      child_span.log({'event': 'error', 'level': 'error', 'reason': reason});
+
       throw new MessageError(
         err.EXIT_SIGNAL
           ? reporter.lang('commandFailedWithSignal', err.EXIT_SIGNAL)
           : reporter.lang('commandFailedWithCode', err.EXIT_CODE),
       );
+
     } else {
       throw err;
     }
