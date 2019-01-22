@@ -374,7 +374,7 @@ export async function execCommand({
 
   let child_tracer = getTracer();
   let child_span;
-  console.error("(*) New tracer spawned:\t\t" + child_tracer._process.uuid + "\t" + stage);
+  //console.error("(*) New tracer spawned:\t\t" + child_tracer._process.uuid + "\t" + stage);
 
 
   // If context environment variable was not set previously, set it on this run
@@ -461,7 +461,7 @@ export async function execCommand({
 
  
     child_span.finish();
-    console.error("(*) Closing child tracer:\t\t" + child_tracer._process.uuid);
+    //console.error("(*) Closing child tracer:\t\t" + child_tracer._process.uuid);
     child_tracer.close();
 
 

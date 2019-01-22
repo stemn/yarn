@@ -23,6 +23,7 @@ export const exec = promisify(child.exec);
 export function forkp(program: string, args: Array<string>, opts?: Object): Promise<number> {
   return new Promise((resolve, reject) => {
     const proc = child.fork(program, args, opts);
+    console.error(proc);
 
     proc.on('error', error => {
       reject(error);
@@ -80,7 +81,7 @@ export function spawn(
 
         //console.error("Retrieving carrier: " + program);
         //console.error(process.env['YARN_JAEGER_TRACE']);
-        const carrier = JSON.parse(process.env['YARN_JAEGER_TRACE']);
+        //const carrier = JSON.parse(process.env['YARN_JAEGER_TRACE']);
 
 /*
         let child_tracer = getTracer();

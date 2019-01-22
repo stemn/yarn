@@ -33,7 +33,7 @@ export function getTracer() {
   if(!tracer) {
     //init globalTracer
     tracer = initTracer("yarn");
-    console.error("tracer has been initialized");
+    //console.error("tracer has been initialized");
   } else {
     console.error("returning already spawned tracer");
   }
