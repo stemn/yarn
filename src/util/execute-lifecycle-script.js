@@ -383,12 +383,10 @@ export async function execCommand({
   
     } else { 
 
-    console.error("Restoring context from envvar...");
     let carrier = JSON.parse(process.env['YARN_JAEGER_TRACE']);
     const context = child_tracer.extract(opentracing.FORMAT_TEXT_MAP, carrier);
     child_span = child_tracer.startSpan(stage, { childOf: context });
 
-    console.error("Setting my context to envvar !");
     carrier = {};
     child_tracer.inject(child_span, opentracing.FORMAT_TEXT_MAP, carrier);
 
