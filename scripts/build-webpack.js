@@ -82,6 +82,10 @@ const compiler = webpack({
         loader: require.resolve('babel-loader')
       },
       {
+        test: /\.thrift$/,
+        use: 'file-loader'
+      },
+      {
         test: /rx\.lite\.aggregates\.js/,
         use: 'imports-loader?define=>false'
       },
