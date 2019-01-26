@@ -17,4 +17,4 @@ script:
   - gcloud auth activate-service-account --key-file=credentials.json
 
   # Upload the built snap file
-  - sudo gsutil cp artifacts/*.deb $GOOGLE_BUCKET/stemn-yarn-$TRAVIS_BRANCH.deb
+  - gsutil cp artifacts/*.deb $GOOGLE_BUCKET/stemn-yarn-$TRAVIS_BRANCH.deb

@@ -4,6 +4,8 @@ Please add one entry in this file for each change in Yarn's behavior. Use the sa
 
 ## Master
 
+## 1.14.0
+
 - Improves PnP compatibility with Node 6
 
   [#6871](https://github.com/yarnpkg/yarn/pull/6871) - [**Robert Jackson**](https://github.com/rwjblue)
@@ -11,6 +13,26 @@ Please add one entry in this file for each change in Yarn's behavior. Use the sa
 - Fixes PnP detection with workspaces (`installConfig` is now read at the top-level)
 
   [#6878](https://github.com/yarnpkg/yarn/pull/6878) - [**Maël Nison**](https://twitter.com/arcanis)
+  
+- Fixes an interaction between `yarn pack` and bundled dependencies
+
+  [#6908](https://github.com/yarnpkg/yarn/pull/6908) - [**Travis Hoover**](https://twitter.com/thoov)
+
+- Adds support for `GITHUB_TOKEN` in `yarn policies set-version`
+
+  [#6912](https://github.com/yarnpkg/yarn/pull/6912) - [**Billy Vong**](https://github.com/billyvg)
+
+- Fixes an issue where `resolve` would forward an incomplete basedir to the PnP hook
+
+  [#6882](https://github.com/yarnpkg/yarn/pull/6882) - [**Zoran Regvart**](https://github.com/zregvart)
+
+- Fixes the command that `yarn unlink` recommends to run as a followup (now `yarn install --force`)
+
+  [#6931](https://github.com/yarnpkg/yarn/pull/6931) - [**Justin Sacbibit**](https://github.com/justinsacbibit)
+
+- Changes the location where the `--require ./.pnp.js` flag gets added into `NODE_OPTIONS`: now at the front
+
+  [#6942](https://github.com/yarnpkg/yarn/pull/6942) - [**John-David Dalton**](https://twitter.com/jdalton)
 
 ## 1.13.0
 
@@ -53,7 +75,7 @@ Please add one entry in this file for each change in Yarn's behavior. Use the sa
 - Properly reports the error codes when the npm registry throws 500's
 
   [#6817](https://github.com/yarnpkg/yarn/pull/6817) - [**Maël Nison**](https://twitter.com/arcanis)
-
+  
 ## 1.12.3
 
 **Important:** This release contains a cache bump. It will cause the very first install following the upgrade to take slightly more time, especially if you don't use the [Offline Mirror](https://yarnpkg.com/blog/2016/11/24/offline-mirror/) feature. After that everything will be back to normal.
