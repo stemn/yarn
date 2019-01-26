@@ -4,6 +4,8 @@ Please add one entry in this file for each change in Yarn's behavior. Use the sa
 
 ## Master
 
+## 1.14.0
+
 - Improves PnP compatibility with Node 6
 
   [#6871](https://github.com/yarnpkg/yarn/pull/6871) - [**Robert Jackson**](https://github.com/rwjblue)
@@ -23,6 +25,14 @@ Please add one entry in this file for each change in Yarn's behavior. Use the sa
 - Fixes an issue where `resolve` would forward an incomplete basedir to the PnP hook
 
   [#6882](https://github.com/yarnpkg/yarn/pull/6882) - [**Zoran Regvart**](https://github.com/zregvart)
+
+- Fixes the command that `yarn unlink` recommends to run as a followup (now `yarn install --force`)
+
+  [#6931](https://github.com/yarnpkg/yarn/pull/6931) - [**Justin Sacbibit**](https://github.com/justinsacbibit)
+
+- Changes the location where the `--require ./.pnp.js` flag gets added into `NODE_OPTIONS`: now at the front
+
+  [#6942](https://github.com/yarnpkg/yarn/pull/6942) - [**John-David Dalton**](https://twitter.com/jdalton)
 
 ## 1.13.0
 
@@ -65,7 +75,7 @@ Please add one entry in this file for each change in Yarn's behavior. Use the sa
 - Properly reports the error codes when the npm registry throws 500's
 
   [#6817](https://github.com/yarnpkg/yarn/pull/6817) - [**Maël Nison**](https://twitter.com/arcanis)
-
+  
 ## 1.12.3
 
 **Important:** This release contains a cache bump. It will cause the very first install following the upgrade to take slightly more time, especially if you don't use the [Offline Mirror](https://yarnpkg.com/blog/2016/11/24/offline-mirror/) feature. After that everything will be back to normal.
