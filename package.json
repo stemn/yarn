@@ -100,11 +100,12 @@
     "prettier": "^1.5.2",
     "string-replace-loader": "^2.1.1",
     "temp": "^0.8.3",
-    "webpack": "^2.1.0-beta.25",
+    "webpack": "3",
     "yargs": "^6.3.0"
   },
   "resolutions": {
-    "sshpk": "^1.14.2"
+    "sshpk": "^1.14.2",
+    "uglifyjs-webpack-plugin": "1"
   },
   "engines": {
     "node": ">=4.0.0"
